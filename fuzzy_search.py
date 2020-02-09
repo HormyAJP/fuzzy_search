@@ -113,12 +113,12 @@ def fuzzy_search_with_highlights(search_string, data):
 
     return matches
 
-# matches = fuzzy_search_with_highlights(STRING_TO_MATCH, lines)
-# matches.sort(key=lambda x: len(x))
-# for matched in matches:
-#     for part in matched:
-#         if part[0] == NO_HIGHLIGHT:
-#             sys.stdout.write(part[1])
-#         else:
-#             sys.stdout.write(f"\033[92m{part[1]}\033[0m")
-#     sys.stdout.write("\n")
+matches = fuzzy_search_with_highlights(STRING_TO_MATCH, lines)
+matches.sort(key=lambda x: len(x))
+for matched in matches:
+    for part in matched:
+        if part[0] == NO_HIGHLIGHT:
+            sys.stdout.write(part[1])
+        else:
+            sys.stdout.write(f"\033[92m{part[1]}\033[0m")
+    sys.stdout.write("\n")
