@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-
 import sys
+
+STRING_TO_MATCH = "module"
 
 with open("fuzzy_input.txt") as f:
     lines = [line.strip() for line in f.readlines()]
@@ -26,14 +27,10 @@ def fuzzy_search(search_string, data):
 
     return matches
 
-# for matched in fuzzy_search("hello", lines):
-#     print(matched)
-
-
 NO_HIGHLIGHT = 0
 HIGHLIGHT = 1
 
-def fuzzy_match_with_highlights(search_string, string_to_search):
+def fuzzy_match_with_highlights(search_string, string_to_search, case_sensitive=False):
     ret = []
     current_highlight = None
     current_group = []
@@ -44,7 +41,12 @@ def fuzzy_match_with_highlights(search_string, string_to_search):
         searchee_char = string_to_search[searchee_index]
         # print(f"Searching for {search_char}")
         # print(f"Current char {searchee_char}")
-        if search_char.lower() == searchee_char.lower():
+        if case_sensitive:
+            matches = search_char == searchee_char
+        else:
+            matches = search_char.lower() == searchee_char.lower()
+
+        if matches:
             search_index += 1
             searchee_index += 1
             # print(f"Matched {search_char} == {searchee_char}")
@@ -83,17 +85,18 @@ def fuzzy_match_with_highlights(search_string, string_to_search):
 def fuzzy_search_with_highlights(search_string, data):
     matches = []
     for string in data:
-        ret = fuzzy_match_with_highlights(search_string, string)
+        ret = fuzzy_match_with_highlights(search_string, string, case_sensitive=True)
         if len(ret) != 0:
             matches.append(ret)
 
     return matches
 
-for matched in fuzzy_search_with_highlights("module", lines):
-    # \033[4mhello\033[0m
+matches = fuzzy_search_with_highlights(STRING_TO_MATCH, lines)
+matches.sort(key=lambda x: len(x))
+for matched in matches:
     for part in matched:
         if part[0] == NO_HIGHLIGHT:
             sys.stdout.write(part[1])
         else:
             sys.stdout.write(f"\033[92m{part[1]}\033[0m")
-    print("")
+    sys.stdout.write("\n")
